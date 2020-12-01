@@ -1,0 +1,62 @@
+% c est un vecteur colonne binaire de taille [N,1];
+% H est une matrice de taille [M,N] constituée de true et false;
+% p est un vecteur colonne de taille [N,1] tel que p(i) est la probabilité que c(i)==1;
+% MAX_ITER est un entier strictement positif spécifiant le nombre maximal d’itérations que peut effectuer le
+%décodeur.
+
+
+% Return
+% c_cor le vecteur colonne binaire de taille [N,1] issu du décodage.
+
+
+
+function c_cor = soft_decoder(c, H, p, MAX_ITER) 
+
+
+    %---- 
+    % VERIFICATION DES CONDITIONS
+    % ----
+    
+    
+    
+    
+    
+    [c_rows, c_cols] = size(c);
+    [H_rows, H_cols] = size(H);
+    iterations = c;
+    
+    %---- 
+    % INITIALISATION
+    % ----
+    
+    %mat_tempo_in contient la valeur fournit aux noeuds pour une itération
+    %d'opérations logiques 
+    %mat_tempo_out contient les valeurs au fure et à mesure des itérations
+    %modifié par les opérations logiques des noeufs
+    mat_tempo_in =  -1 * ones(amount_of_c_nodes, amount_of_v_nodes);
+    mat_tempo_out = -1 * ones(amount_of_c_nodes, amount_of_v_nodes);
+    
+    %init de mat_tempo_in avant la première itération 
+    for row = 1:H_rows
+        for col = 1:H_cols
+            if H(row, col) == 1
+                mat_tempo_in(row, col) = p(col);
+            end
+        end
+    end
+    
+    
+    % ----
+    % ITERATION et calcul des opérations logiques 
+    % ----
+for iter = 1:MAX_ITER                      
+        % Les c-nodes vont calculer les reponses
+        for row = 1:amount_of_c_nodes
+            for col = 1:amount_of_v_nodes
+                
+             % do some good stuff
+             
+            end
+        end
+end 
+    
