@@ -22,10 +22,15 @@ function c_cor = soft_decoder(c, H, p, MAX_ITER)
     % compris cette partie du cours
     
     
-    
     [c_rows, c_cols] = size(c);
     [H_rows, H_cols] = size(H);
     iterations = c;
+    
+     % verifier que la somme soit <= 1 avant l'attribution des valeurs 
+     % (on travaille sur des probas, p(i) est la probabilité que c(i)==1 ) 
+     
+    amount_of_v_nodes = c_cols;
+    amount_of_v_nodes = c_rows;
     
     %---- 
     % INITIALISATION
