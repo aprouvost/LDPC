@@ -1,75 +1,178 @@
 % c est un vecteur colonne binaire de taille [N,1];
-% H est une matrice de taille [M,N] constituée de true et false;
-% p est un vecteur colonne de taille [N,1] tel que p(i) est la probabilité que c(i)==1;
-% MAX_ITER est un entier strictement positif spécifiant le nombre maximal d’itérations que peut effectuer le
-%décodeur.
+% H est une matrice de taille [M,N] constituï¿½e de true et false;
+% p est un vecteur colonne de taille [N,1] tel que p(i) est la probabilitï¿½ que c(i)==1;
+% MAX_ITER est un entier strictement positif spï¿½cifiant le nombre maximal dï¿½itï¿½rations que peut effectuer le
+%dï¿½codeur.
 
 
 % ---- Return
-% c_cor le vecteur colonne binaire de taille [N,1] issu du décodage.
+% c_cor le vecteur colonne binaire de taille [N,1] issu du dï¿½codage.
 
 
 
-function c_cor = soft_decoder(c, H, p, MAX_ITER) 
+function c_cor = soft_decoder_groupei(c, H, p, MAX_ITER)
 
-    %---- 
-    % VERIFICATION DES CONDITIONS pour appliquer un soft decoder 
+    %----
+    % VERIFICATION DES CONDITIONS pour appliquer un soft decoder
     % ----
-    
-    % TO DO parity check 
+
+    % TO DO parity check
     % Check des dims de H et que ce soit bien une matrice binaire avec ne
     % num de 1 inf aux nums de 0 je sais pas si c'est obligatoire j'ai pas
     % compris cette partie du cours
-    
-    
+
+
     [c_rows, c_cols] = size(c);
     [H_rows, H_cols] = size(H);
     iterations = c;
-    
-     % verifier que la somme soit <= 1 avant l'attribution des valeurs 
-     % (on travaille sur des probas, p(i) est la probabilité que c(i)==1 ) 
-     
-    amount_of_v_nodes = c_cols;
-    amount_of_v_nodes = c_rows;
-    
-    %---- 
+
+
+     %verifier que H est bien une matrice binaire
+     for row = 1:H_rows
+         for col = 1:H_cols
+            if H(row,col) ~=  1 || H(row,col) ~=  0
+              disp("ERREUR matrice H invalide car non binaire");
+              exit
+            end
+          end
+      end
+
+     %verifier que H soit de taille cohÃ©rente avec c pour le dÃ©codage
+     %attention au cas oÃ¹ c doit Ãªtre transposÃ©e
+    if c_cols  ~= H_cols || c_rows ~= H_cols
+      disp("ERREUR mauvaise dimension pour c");
+      exit
+    end
+
+    %verifie que c soit de la bonne forme ( taille et Ã©lÃ©ments binaires )
+    if (c_cols == 1 && c_rows == 1)
+      disp("ERREUR c doit Ãªtre un vecteur")
+    end
+
+    % verifier que la somme soit <= 1 avant l'attribution des valeurs
+    % (on travaille sur des probas, p(i) est la probabilitï¿½ que c(i)==1 )
+    count = 0
+    for i=1: c_cols
+      for j=1 c_rows
+        if c(i,j) >  1 || c(i,j) < 0
+          disp("ERREUR c doit Ãªtre un vecteur de probabilitÃ©")
+        else
+          cont = cont + c(i,j)
+        end
+      end
+    end
+
+    if cont>1
+      disp("ERREUR les probabilites de c ne sont pas correctes")
+      exit
+    end
+
+    %gÃ¨re le cas oÃ¹ c doit Ãªtre transposÃ©e, en verifiant que c est un vecteur
+    %c est transposÃ©e si c_cols > 1
+
+    if isvector(c) && (c_cols > 1)
+            amount_of_v_nodes = c_cols;
+        else
+            amount_of_v_nodes = c_rows;
+    end
+
+
+
+    %----
     % INITIALISATION
     % ----
-    
-    %mat_tempo_in contient la valeur fournit aux noeuds pour une itération
-    %d'opérations logiques 
-    %mat_tempo_out contient les valeurs au fure et à mesure des itérations
-    %modifié par les opérations logiques des noeufs
+
+    %mat_tempo_in contient la valeur fournit aux noeuds pour une itï¿½ration
+    %d'opï¿½rations de probabilitÃ©
+    %mat_tempo_out contient les valeurs au fure et ï¿½ mesure des itï¿½rations
+    %modifiï¿½ par les opï¿½rations logiques des noeufs
     mat_tempo_in =  -1 * ones(amount_of_c_nodes, amount_of_v_nodes);
     mat_tempo_out = -1 * ones(amount_of_c_nodes, amount_of_v_nodes);
-    
-    %init de mat_tempo_in avant la première itération 
+
+
+    % step 1
+    %init de mat_tempo_in avant la premiï¿½re itï¿½ration
     for row = 1:H_rows
         for col = 1:H_cols
             if H(row, col) == 1
+              % pour chaque noeud de la matrice connectÃ©, on a un 1 dans H
+              % et une proba dans dans mat_tempo_in
                 mat_tempo_in(row, col) = p(col);
             end
         end
     end
-    
-    
-    % ----
-    % ITERATION et calcul des opérations logiques (réponses des noeuds) 
-    % ----
-    
-for iter = 1:MAX_ITER                      
-        % Les c-nodes vont calculer les reponses
-        for row = 1:amount_of_c_nodes
-            for col = 1:amount_of_v_nodes
-                
-             % do some good stuff
-             
-            end
-        end
-end 
+
 
     % ----
-    % MISE A JOUR des valeurs suite aux opérations logiques  
+    % ITERATION et calcul des opï¿½rations logiques (rï¿½ponses des noeuds)
     % ----
-    
-    
+
+  for iter = 1:MAX_ITERÂ£
+          % step 2 calcul des messages rÃ©ponses
+          % Les c-nodes vont calculer les reponses
+          for row = 1:amount_of_c_nodes
+              for col = 1:amount_of_v_nodes
+                rij = ones(1,2)
+                num = abs(prod(1-2*mat_tempo_in,2));
+                rij(1) = 0.5 + (0.5*(num(row)/(1-2*mat_tempo_in(row,col)));
+                rij(2) = 1- rij(1);
+                mat_tempo_out(row, col) = rij(1);
+              end
+            end
+
+        %setp 3 les noeuds variables update leurs messages de rÃ©ponse
+        for col=1 : amount_of_v_nodes
+
+          num = abs(prod(mat_tempo_in,1));
+          num_2= prod(nonzeros(1-abs(mat_tempo_in)),1);
+          qinit(1) = (1-p(col))*num ;
+          qinit(2) = p(col)*num_2;
+
+          Ki = 1/(qinit(1)+ qinit(2));
+          qi = ones(1,2);
+          qi(1) = Ki*qinit(1);
+          qi(2) = Ki*qinit(2);
+
+          %comparaison des Qi(1) et Qi(0)
+          if qi(1) > qi(2)
+            iteration(col)= 1;
+          else
+            iteration(col)= 0;
+          end
+
+          % ----
+          % MISE A JOUR des valeurs suite aux opï¿½rations
+          % ----
+          % mise Ã  jour des messages des v_nodes de la matrice mat_tempo_out
+
+          % do some good stuff
+
+
+          % si le mot code estimÃ© passe le test de paritÃ©
+          % on s arrÃªte
+          % sinon, on reprend au STEP 2
+          
+
+          parite = parity_check(iteration, H ,amount_of_c_nodes, amount_of_v_nodes)
+          if sum(parite) == 0
+            disp("Done");
+            c_cor = iteration;
+            return
+        end
+  end
+
+
+
+function is_vector_even = parity_check(c, H, c_nodes, v_nodes)
+    % Do the parity check for the given c
+    is_vector_even = zeros(c_nodes, 1);
+    for row = 1:c_nodes
+        parity = 0;
+        for col = 1:v_nodes
+            if H(row, col) ~= 0
+                parity = parity + c(col);
+            end
+        end
+        is_vector_even(row) = mod(parity, 2);
+    end
+end
