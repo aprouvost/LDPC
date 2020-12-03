@@ -49,3 +49,18 @@ function c_cor = hard_decoder(c, H, MAX_ITER)
             end
         end
 end
+
+
+function is_vector_even = parity_check(c, H, c_nodes, v_nodes)
+    % Do the parity check for the given c
+    is_vector_even = zeros(c_nodes, 1);
+    for row = 1:c_nodes
+        parity = 0;
+        for col = 1:v_nodes
+            if H(row, col) ~= 0
+                parity = parity + c(col);
+            end
+        end
+        is_vector_even(row) = mod(parity, 2);
+    end
+end
