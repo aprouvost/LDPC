@@ -12,7 +12,6 @@
 
 function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
 
-  c_cor =c;
 
   %----
   % VERIFICATION DES CONDITIONS pour appliquer un soft decoder
