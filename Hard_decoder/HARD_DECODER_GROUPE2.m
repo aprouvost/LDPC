@@ -92,9 +92,9 @@ function c_cor = HARD_DECODER_GROUPE2(c, H, MAX_ITER)
         end
 
         is_vector_even = zeros(number_of_Cnodes, 1);
-        for ligne = 1:number_of_Cnodes
+        for ligne = 1:number_of_Vnodes
             parity = 0;
-            for colonne = 1:number_of_Vnodes
+            for colonne = 1:number_of_Cnodes
                 if H(ligne, colonne) ~= 0
                     parity = parity + c(colonne);
                 end
@@ -106,5 +106,5 @@ function c_cor = HARD_DECODER_GROUPE2(c, H, MAX_ITER)
             return
         end
     end
-    c_cor = iter_c;
+    c_cor = iteration_c;
 end
