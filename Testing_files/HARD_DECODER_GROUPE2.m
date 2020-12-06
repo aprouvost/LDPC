@@ -1,7 +1,7 @@
 % Authors HBA CLA
 
 
-function c_cor = hard_decoder(c, H, MAX_ITER)
+function c_cor = HARD_DECODER_GROUPE2(c, H, MAX_ITER)
     % c matrice de taille (N,1) - Flux de bits 
     % M matrice binaire de taille (M,N) - Matrice d association 
     % MAX_ITER int - Maximum d iteration
@@ -11,10 +11,10 @@ function c_cor = hard_decoder(c, H, MAX_ITER)
 
     % TODO :: check input confomity 
 
-    number_of_Vnodes = c_cols
-    number_of_Cnodes = c_rows
+    number_of_Vnodes = c_cols;
+    number_of_Cnodes = c_rows;
 
-    iteration_c = c
+    iteration_c = c;
 
     % main loop 
     for iteration = 1:MAX_ITER
@@ -27,7 +27,7 @@ function c_cor = hard_decoder(c, H, MAX_ITER)
         for ligne = 1:H_rows
             for colonne = 1:H_cols
                 if H(ligne, colonne) == 1
-                    Messages(ligne, colonne) == iteration_c(colonne)
+                    Messages(ligne, colonne) = iteration_c(colonne);
                 end
             end
         end
@@ -54,9 +54,9 @@ function c_cor = hard_decoder(c, H, MAX_ITER)
         
         %check if algorithm terminates
         is_vector_even = zeros(number_of_Cnodes, 1);
-        for ligne = 1:number_of_Cnodes
+        for ligne = 1:number_of_Vnodes
             parity = 0;
-            for colonne = 1:number_of_Vnodes
+            for colonne = 1:number_of_Cnodes
                 if H(ligne, colonne) ~= 0
                     parity = parity + c(colonne);
                 end
@@ -72,7 +72,7 @@ function c_cor = hard_decoder(c, H, MAX_ITER)
         %Thid step : use additional information
         %Majority vote
         majority_vote = ones(number_of_Vnodes,number_of_Cnodes);
-        majority_index = 1
+        majority_index = 1;
         for colonne = 1:number_of_Vnodes
             for c_node_index = 1:number_of_Vnodes
                 if Responses(c_node_index, colonne) ~= -1
