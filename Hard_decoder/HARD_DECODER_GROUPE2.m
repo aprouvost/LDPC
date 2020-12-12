@@ -76,7 +76,7 @@ function c_cor = HARD_DECODER_GROUPE2(c, H, MAX_ITER)
         for colonne = 1:number_of_Vnodes
             for c_node_index = 1:number_of_Vnodes
                 if Responses(c_node_index, colonne) ~= -1
-                    majority_vote(colonne, majority_index) = responses(c_node_index, colonne);
+                    majority_vote(colonne, majority_index) = Responses(c_node_index, colonne);
                     majority_index = majority_index + 1;
                 end
             end
