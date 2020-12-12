@@ -18,10 +18,7 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
   % ----
 
   % TODO parity check
-  % Check des dims de H et que ce soit bien une matrice binaire avec ne
-  % num de 1 inf aux nums de 0 je sais pas si c'est obligatoire j'ai pas
-  % compris cette partie du cours
-
+  % Check des dims de H et que ce soit bien une matrice binaire
 
   [c_rows, c_cols] = size(c);
   [H_rows, H_cols] = size(H);
@@ -84,7 +81,7 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
     %mat_tempo_in contient la valeur fournit aux noeuds pour une it�ration
     %d'op�rations de probabilité
     %mat_tempo_out contient les valeurs au fure et � mesure des it�rations
-    %modifi� par les op�rations logiques des noeufs
+    %modifi� par les op�rations des noeuds
 
     mat_tempo_in =  -1 * ones(H_rows, amount_of_v_nodes);
     mat_tempo_out = -1 * ones(H_rows, amount_of_v_nodes);
@@ -112,26 +109,24 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
     % Les c-nodes vont calculer les reponses
     for row = 1:H_rows
       for col = 1:amount_of_v_nodes
-        rij = ones(1,2);
-        num = abs(prod(1-2*mat_tempo_in,2));
-        rij(1) = 0.5 + (0.5*(num(row)/(1-2*mat_tempo_in(row,col))));
-        rij(2) = 1- rij(1);
-        mat_tempo_out(row, col) = rij(1);
+          rij = ones(1,2);
+          num = abs(prod(1-2*mat_tempo_in,2));
+          rij(1) = 0.5 + (0.5*(num(row)/(1-2*mat_tempo_in(row,col))));
+          rij(2) = 1- rij(1);
+          mat_tempo_out(row, col) = rij(1);
       end
     end
 
     %setp 3 les noeuds variables update leurs messages de réponse
     for col=1 : amount_of_v_nodes
 
-      num = abs(prod(mat_tempo_in,1));
-      num_2= prod(nonzeros(1-abs(mat_tempo_in)),1);
-
-      tab=mat_tempo_in(:,col);
-      tab_tempo=prod(abs(mat_tempo_in),1);
+      tab=mat_tempo_out(:,col);
+      tab_tempo=prod(abs(mat_tempo_out),1);
       tab_tempo_opposees=prod(nonzeros(1-abs(tab)),1);
 
       prod_col(1) = tab_tempo(col);
       prod_col(2) = tab_tempo_opposees;
+
       qinit = zeros(1,2);
       qinit(1) = (1-p(col))*prod_col(1);
       qinit(2) = p(col)*prod_col(2);
@@ -142,7 +137,7 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
       qi(2) = Ki*qinit(2);
 
       %comparaison des Qi(1) et Qi(0)
-      if qi(1) > qi(2)
+      if qi(2) > qi(1)
         iteration(col)= 1;
       else
         iteration(col)= 0;
@@ -155,22 +150,20 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
 
 
       for row = 1 : H_rows
-        % ne met pas à jour les cases n ayant pas eu d update (celles étant encore à -1)
-        if(mat_tempo_out(row, col) ~= -1)
           qnum = zeros(1,2);
           qij = zeros(1,2);
 
           %recalcul du K pour chaque elem avant la mise à jour
-          qnum(1)= qinit(1)/mat_tempo_in(row, col);
-          qnum(2)= qinit(2)/ (1 - mat_tempo_in(row, col));
+          qnum(1)= qinit(1)/mat_tempo_out(row, col);
+          qnum(2)= qinit(2)/ (1 - mat_tempo_out(row, col));
           kij = 1 / (qnum(1) + qnum(2));
 
           %maj des valeurs
           qij(1) = kij * qnum(1);
           qij(2) = kij * qnum(2);
-          mat_tempo_out(row,col) = qij(1);
-        end
+          mat_tempo_in(row,col) = qij(1);
       end
+    end
 
       % si le mot code estimé passe le test de parité
       % on s arrête
@@ -179,12 +172,14 @@ function c_cor = SOFT_DECODER_GROUPE2(c, H, p, MAX_ITER)
       parite = parity_check(iteration, H ,H_rows, amount_of_v_nodes);
       if sum(parite) == 0
         %fprintf("Done\n NUM ITERATIONS : %i ", iteration);
+        %disp(iteration);
         c_cor = iteration;
         return
       end
   end
- end
+
   %disp("Max iteration without success\n");
+  %disp(iteration);
   c_cor = iteration;
 end
 
